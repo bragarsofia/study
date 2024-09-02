@@ -8,12 +8,17 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
         h1 {
             text-align: center;
         }
         .day {
             margin-bottom: 20px;
+            text-align: center;
         }
         .time {
             font-weight: bold;
@@ -33,6 +38,12 @@
         .button:hover {
             background-color: #45a049;
         }
+        .highlight-green {
+            color: green;
+        }
+        .highlight-orange {
+            color: orange;
+        }
     </style>
 </head>
 <body>
@@ -41,53 +52,53 @@
 
     <div class="day">
         <h2>Понеділок</h2>
-        <p><span class="time">8:00-9:35:</span> Парний Практика Психологія (01-05) 
+        <p><span class="time">8:00-9:35:</span> <span class="highlight-green">Парний</span> <span class="highlight-orange">Практика</span> Психологія (01-05) 
             <a href="https://meet.google.com/znb-udyo-rho?authuser=0" class="button">Підключитись</a>
         </p>
-        <p><span class="time">9:50-11:25:</span> Лекція ООП 
+        <p><span class="time">9:50-11:25:</span> <span class="highlight-orange">Лекція</span> ООП 
             <a href="http://bit.ly/hodovychenko_zoom" class="button">Підключитись</a>
         </p>
-        <p><span class="time">11:40-13:15:</span> Лекція БД 
+        <p><span class="time">11:40-13:15:</span> <span class="highlight-orange">Лекція</span> БД 
             <a href="https://us04web.zoom.us/j/8177791667?pwd=Z1NuQzZjdVRDOStHNVdrNmwvNllLdz09&omn=78840146752" class="button">Підключитись</a>
         </p>
     </div>
 
     <div class="day">
         <h2>Вівторок</h2>
-        <p><span class="time">8:00-9:35:</span> Непарний Лекція Психологія 
+        <p><span class="time">8:00-9:35:</span> <span class="highlight-green">Непарний</span> <span class="highlight-orange">Лекція</span> Психологія 
             <a href="https://meet.google.com/tjd-vwnk-frv" class="button">Підключитись</a>
         </p>
-        <p><span class="time">9:50-11:25:</span> Лабораторна БД 
+        <p><span class="time">9:50-11:25:</span> <span class="highlight-orange">Лабораторна</span> БД 
             <a href="https://us04web.zoom.us/j/3235895072?pwd=Q1YyNDNsMG1mdUtXQmtqSjh0UDExdz09" class="button">Підключитись</a>
         </p>
-        <p><span class="time">11:40-13:15:</span> Практика Українська мова 
+        <p><span class="time">11:40-13:15:</span> <span class="highlight-orange">Практика</span> Українська мова 
             <a href="#" class="button">Підключитись</a>
         </p>
     </div>
 
     <div class="day">
         <h2>Середа</h2>
-        <p><span class="time">8:00-9:35:</span> Непарний тиждень Лекція Українська мова </p>
-        <p><span class="time">9:50-11:25:</span> Лекція Теорія ймовірності 
+        <p><span class="time">8:00-9:35:</span> <span class="highlight-green">Непарний тиждень</span> <span class="highlight-orange">Лекція</span> Українська мова </p>
+        <p><span class="time">9:50-11:25:</span> <span class="highlight-orange">Лекція</span> Теорія ймовірності 
             <a href="https://us04web.zoom.us/j/6592901524?pwd=TFpiSHhTdnpxU0FPdFNVQ3d2eU1sdz09" class="button">Підключитись</a>
         </p>
-        <p><span class="time">11:40-13:15:</span> Лекція ТА 
+        <p><span class="time">11:40-13:15:</span> <span class="highlight-orange">Лекція</span> ТА 
             <a href="https://us02web.zoom.us/j/88573994331?pwd=S242c0FXVjRCYzRzS3FvU3dZbENtZz09" class="button">Підключитись</a>
         </p>
     </div>
 
     <div class="day">
         <h2>Четверг</h2>
-        <p><span class="time">8:00-9:35:</span> Парний Практика Психологія (01-04) 
+        <p><span class="time">8:00-9:35:</span> <span class="highlight-green">Парний</span> <span class="highlight-orange">Практика</span> Психологія (01-04) 
             <a href="https://meet.google.com/tjd-vwnk-frv" class="button">Підключитись</a>
         </p>
-        <p><span class="time">9:50-11:25:</span> Лекція ІОТ 
+        <p><span class="time">9:50-11:25:</span> <span class="highlight-orange">Лекція</span> ІОТ 
             <a href="https://us04web.zoom.us/j/2756188005?pwd=MmdEdC9saUlMTmhENzBPUkl1bm91QT09" class="button">Підключитись</a>
         </p>
-        <p><span class="time">11:40-13:15:</span> Непарний Практика Теорія Ймовірності 
+        <p><span class="time">11:40-13:15:</span> <span class="highlight-green">Непарний</span> <span class="highlight-orange">Практика</span> Теорія Ймовірності 
             <a href="https://us04web.zoom.us/j/6592901524?pwd=TFpiSHhTdnpxU0FPdFNVQ3d2eU1sdz09" class="button">Підключитись</a>
         </p>
-        <p><span class="time">11:40-13:15:</span> Парний Лаба ТА 
+        <p><span class="time">11:40-13:15:</span> <span class="highlight-green">Парний</span> <span class="highlight-orange">Лаба ТА</span> 
             <a href="https://meet.google.com/whs-kgcz-wqj" class="button">Підключитись</a>
         </p>
     </div>
@@ -95,10 +106,10 @@
     <div class="day">
         <h2>Пятниця</h2>
         <p><span class="time">8:00-9:35:</span> </p>
-        <p><span class="time">9:50-11:25:</span> Лабораторна ООП 
+        <p><span class="time">9:50-11:25:</span> <span class="highlight-orange">Лабораторна</span> ООП 
             <a href="http://bit.ly/hodovychenko_zoom" class="button">Підключитись</a>
         </p>
-        <p><span class="time">11:40-13:15:</span> Парний Лаба ІОТ 
+        <p><span class="time">11:40-13:15:</span> <span class="highlight-green">Парний</span> <span class="highlight-orange">Лаба ІОТ</span> 
             <a href="https://us04web.zoom.us/j/2756188005?pwd=MmdEdC9saUlMTmhENzBPUkl1bm91QT09" class="button">Підключитись</a>
         </p>
     </div>
