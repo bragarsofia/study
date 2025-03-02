@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розклад</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent: #656565;
+            --border: #333333;
+            --header-bg: #252525;
+            --even-row: #2a2a2a;
+            --odd-row: #232323;
+            --button-bg: #444444;
+            --button-hover: #666666;
+            --note-color: #ffc107;
+            --note-bg: rgba(255, 193, 7, 0.1);
+        }
+        
+        body {
+            font-family: 'Roboto', 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--header-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            padding: 0;
+            font-size: 2rem;
+        }
+        
+        .week-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            gap: 15px;
+        }
+        
+        .week-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--accent);
+            color: var(--text-primary);
+            font-weight: bold;
+            border-radius: 20px;
+        }
+        
+        .week-number {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--accent);
+            color: var(--text-primary);
+            font-weight: bold;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        
+        .week-toggle {
+            background-color: var(--button-bg);
+            color: var(--text-primary);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        
+        .week-toggle:hover {
+            background-color: var(--button-hover);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        .day-section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .day-header {
+            background-color: var(--header-bg);
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        tr:nth-child(even) {
+            background-color: var(--even-row);
+        }
+        
+        tr:nth-child(odd) {
+            background-color: var(--odd-row);
+        }
+        
+        td, th {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            font-weight: bold;
+            background-color: var(--header-bg);
+            color: var(--text-primary);
+        }
+        
+        .time-cell {
+            width: 120px;
+            color: var(--text-secondary);
+        }
+        
+        .subject-cell {
+            font-weight: bold;
+        }
+        
+        .teacher-cell {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .join-button {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .join-button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        .no-classes {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .current-day {
+            border-left: 4px solid var(--accent);
+        }
+        
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .start-week-note {
+            color: var(--note-color);
+            font-size: 0.85rem;
+            font-style: italic;
+            display: block;
+            margin-top: 5px;
+            background-color: var(--note-bg);
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            .time-cell {
+                width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Розклад навчання</h1>
+            <div class="week-controls">
+                <button class="week-toggle" onclick="toggleWeek('odd')">Непарний</button>
+                <div id="week-indicator" class="week-indicator"></div>
+                <button class="week-toggle" onclick="toggleWeek('even')">Парний</button>
+            </div>
+            <div id="week-number" class="week-number"></div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab" onclick="showDay('monday')">Понеділок</div>
+            <div class="tab" onclick="showDay('tuesday')">Вівторок</div>
+            <div class="tab" onclick="showDay('wednesday')">Середа</div>
+            <div class="tab" onclick="showDay('thursday')">Четвер</div>
+            <div class="tab" onclick="showDay('friday')">П'ятниця</div>
+        </div>
+        
+        <div id="schedule-container"></div>
+    </div>
+
+    <script>
+        // Дані розкладу
+        const scheduleData = {
+            even: {
+                monday: [
+                    {time: "8:00 - 9:35", subject: "Екологія (Практика)", teacher: "Ольшанська Тетяна Олександрвна", links: [{url: "https://teams.microsoft.com/l/meetup-join/19%3aa4af2730cdfe42748402bc407da2c2cf%40thread.tacv2/1740642965747?context=%7b%22Tid%22%3a%22bd2fa240-71fc-45bd-abce-f1bc80beeb0a%22%2c%22Oid%22%3a%22af0abbf1-c081-40b6-86e0-44c5947b0f78%22%7d", label: "Teams"}]},
+                    {time: "9:50 - 11:25", subject: "Об'єктно-орієнтоване програмування (Лекція)", teacher: "Годовиченко Микола Анатолійович", links: [{url: "https://bit.ly/hodovychenko_zoom", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "Програмування систем ІоТ (Лекція)", teacher: "Кондратьєв Сергій Борисович", links: [{url: "https://meet.google.com/jrf-dbjh-gab", label: "Google Meet"}]},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ],
+                tuesday: [
+                    {time: "8:00 - 9:35", subject: "", teacher: "", links: []},
+                    {time: "9:50 - 11:25", subject: "Технології комп'ютерного проєктування (Лекція)", teacher: "Галчонков Олег Миколайович", links: [{url: "https://us02web.zoom.us/j/81512968795?pwd=pkLb6nEj63zq0fJhnFkV8bYBXgR8Jp.1", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "ВЕБ-Технології та ВЕБ-дизайн (Лекція)", teacher: "Щербина Сергій Костянтинович", links: [{url: "https://meet.google.com/iem-nsxc-xhj", label: "Google Meet"}]},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ],
+                wednesday: [
+                    {time: "8:00 - 9:35", subject: "", teacher: "", links: []},
+                    {time: "9:50 - 11:25", subject: "Сучасні системи управління (Лекція)", teacher: "Глава Марія Геннадіївна", links: [{url: "https://us04web.zoom.us/j/8177791667?pwd=Z1NuQzZjdVRDOStHNVdrNmwvNllLdz09&omn=77021159346", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "", teacher: "", links: []},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ],
+                thursday: [
+                    {time: "8:00 - 9:35", subject: "", teacher: "", links: []},
+                    {time: "9:50 - 11:25", subject: "Філософія (Лекція)", teacher: "Янушевич Ірина Анатоліївна", links: [{url: "https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDU4MmZkOGEtZmMxOC00NDk2LWIyMzktOGZkMjVmNTdiZDUx%40thread.v2/0?context=%7b%22Tid%22%3a%22bd2fa240-71fc-45bd-abce-f1bc80beeb0a%22%2c%22Oid%22%3a%22436e6b06-99a3-4fb7-9eab-a754c660d7ad%22%7d", label: "Teams"}]},
+                    {time: "11:40 - 13:15", subject: "ВЕБ-Технології та ВЕБ-дизайн (Лаба)", teacher: "Червоненко Петро Петрович / Щербина Сергій Костянтинович", links: [
+                        {url: "https://meet.google.com/cuh-ohvz-mud", label: "Червоненко П.П."},
+                        {url: "https://meet.google.com/iem-nsxc-xhj", label: "Щербина С.К."}
+                    ]},
+                    {time: "13:30 - 15:05", subject: "Філософія (Практика)", teacher: "Янушевич Ірина Анатоліївна", links: [{url: "https://teams.microsoft.com/l/meetup-join/19%3ameeting_NTQ2YWVkNzYtZDMxYi00MTA0LThlZTYtZTk3ZGE5YTY4YTVi%40thread.v2/0?context=%7b%22Tid%22%3a%22bd2fa240-71fc-45bd-abce-f1bc80beeb0a%22%2c%22Oid%22%3a%22436e6b06-99a3-4fb7-9eab-a754c660d7ad%22%7d", label: "Teams"}]}
+                ],
+                friday: [
+                    {time: "8:00 - 9:35", subject: "Технології комп'ютерного проєктування (Лаба)", teacher: "Галчонков Олег Миколайович / Бабич Микола Іванович", links: [{url: "https://us02web.zoom.us/j/84685729997?pwd=r4SscSLhcnR0jEhevNx6I6jRKJoSNy.1", label: "Zoom"}]},
+                    {time: "9:50 - 11:25", subject: "Сучасні сист. упр. (Лаба)", teacher: "Дрозд Мирослав Олександрович / Іванов Олексій Володимирович", links: [{url: "https://us04web.zoom.us/j/3235895072?pwd=Q1YyNDNsMG1mdUtXQmtqSjh0UDExdz09", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "", teacher: "", links: []},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ]
+            },
+            odd: {
+                monday: [
+                    {time: "8:00 - 9:35", subject: "", teacher: "", links: []},
+                    {time: "9:50 - 11:25", subject: "Об'єктно-орієнтоване програмування (Лекція)", teacher: "Годовиченко Микола Анатолійович", links: [{url: "https://bit.ly/hodovychenko_zoom", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "Програмування систем ІоТ (Лекція)", teacher: "Кондратьєв Сергій Борисович", links: [{url: "https://meet.google.com/jrf-dbjh-gab", label: "Google Meet"}]},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ],
+                tuesday: [
+                    {time: "8:00 - 9:35", subject: "Екологія (Лекція)", teacher: "Васютинська Катерина Анатоліївна", links: [{url: "https://teams.microsoft.com/l/meetup-join/19%3a0b7e971681c94c888ab03c28311c074f%40thread.tacv2/1740644323097?context=%7b%22Tid%22%3a%22bd2fa240-71fc-45bd-abce-f1bc80beeb0a%22%2c%22Oid%22%3a%22af0abbf1-c081-40b6-86e0-44c5947b0f78%22%7d", label: "Teams"}]},
+                    {time: "9:50 - 11:25", subject: "Технології комп'ютерного проєктування (Лекція)", teacher: "Галчонков Олег Миколайович", links: [{url: "https://us02web.zoom.us/j/81512968795?pwd=pkLb6nEj63zq0fJhnFkV8bYBXgR8Jp.1", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "ВЕБ-Технології та ВЕБ-дизайн (Лекція)", teacher: "Щербина Сергій Костянтинович", links: [{url: "https://meet.google.com/iem-nsxc-xhj", label: "Google Meet"}]},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ],
+                wednesday: [
+                    {time: "8:00 - 9:35", subject: "", teacher: "", links: []},
+                    {time: "9:50 - 11:25", subject: "Сучасні системи управління (Лекція)", teacher: "Глава Марія Геннадіївна", links: [{url: "https://us04web.zoom.us/j/8177791667?pwd=Z1NuQzZjdVRDOStHNVdrNmwvNllLdz09&omn=77021159346", label: "Zoom"}]},
+                    {time: "11:40 - 13:15", subject: "", teacher: "", links: []},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ],
+                thursday: [
+                    {time: "8:00 - 9:35", subject: "", teacher: "", links: []},
+                    {time: "9:50 - 11:25", subject: "Філософія (Лекція)", teacher: "Янушевич Ірина Анатоліївна", links: [{url: "https://teams.microsoft.com/l/meetup-join/19%3ameeting_ZDU4MmZkOGEtZmMxOC00NDk2LWIyMzktOGZkMjVmNTdiZDUx%40thread.v2/0?context=%7b%22Tid%22%3a%22bd2fa240-71fc-45bd-abce-f1bc80beeb0a%22%2c%22Oid%22%3a%22436e6b06-99a3-4fb7-9eab-a754c660d7ad%22%7d", label: "Teams"}]},
+                    {time: "11:40 - 13:15", subject: "ВЕБ-Технології та ВЕБ-дизайн (Лаба)", teacher: "Червоненко Петро Петрович / Щербина Сергій Костянтинович", links: [
+                        {url: "https://meet.google.com/cuh-ohvz-mud", label: "Червоненко П.П."},
+                        {url: "https://meet.google.com/iem-nsxc-xhj", label: "Щербина С.К."}
+                    ]},
+                    {time: "13:30 - 15:05", subject: "Об'єктно-орієнт. прогр. (Лаба)", teacher: "Годовиченко Микола Анатолійович / Смик Сергій Юрійович", links: [{url: "https://bit.ly/hodovychenko_zoom", label: "Zoom"}], note: "З ТРЕТЬОГО ТИЖНЯ"}
+                ],
+                friday: [
+                    {time: "8:00 - 9:35", subject: "Технології комп'ютерного проєктування (Лаба)", teacher: "Галчонков Олег Миколайович / Бабич Микола Іванович", links: [{url: "https://us02web.zoom.us/j/84685729997?pwd=r4SscSLhcnR0jEhevNx6I6jRKJoSNy.1", label: "Zoom"}]},
+                    {time: "9:50 - 11:25", subject: "Програмування систем ІоТ (Лаба)", teacher: "Кондратьєв Сергій Борисович / Ядрова Марина Василівна", links: [{url: "https://meet.google.com/jrf-dbjh-gab", label: "Google Meet"}], note: "З ТРЕТЬОГО ТИЖНЯ"},
+                    {time: "11:40 - 13:15", subject: "", teacher: "", links: []},
+                    {time: "13:30 - 15:05", subject: "", teacher: "", links: []}
+                ]
+            }
+        };
+
+        // Змінна для зберігання примусово встановленого типу тижня
+        let forcedWeekType = null;
+
+        // Визначення поточного тижня (парний чи непарний)
+        function determineWeekType() {
+            // Якщо встановлено примусово, використовуємо його
+            if (forcedWeekType) {
+                return forcedWeekType;
+            }
+            
+            // Базова дата - 3 березня 2025 (непарний тиждень)
+            const baseDate = new Date(2025, 2, 3); // Місяці в JavaScript починаються з 0
+            const today = new Date();
+            
+            // Різниця в днях
+            const diffTime = Math.abs(today - baseDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Кількість тижнів від базової дати
+            const weeksDiff = Math.floor(diffDays / 7);
+            
+            // Визначаємо тип тижня
+            return (weeksDiff % 2 === 0) ? "odd" : "even";
+        }
+
+        // Функція для обчислення номера тижня від початку семестру
+        function calculateWeekNumber() {
+            // Базова дата - 3 березня 2025 (перший тиждень)
+            const baseDate = new Date(2025, 2, 3); // Місяці в JavaScript починаються з 0
+            const today = new Date();
+            
+            // Різниця в днях
+            const diffTime = Math.abs(today - baseDate);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            // Кількість тижнів від базової дати + 1 (початковий тиждень)
+            return Math.floor(diffDays / 7) + 1;
+        }
+
+        // Функція для примусового встановлення типу тижня
+        function toggleWeek(weekType) {
+            forcedWeekType = weekType;
+            updateWeekIndicator();
+            
+            // Перезавантажуємо поточний день
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                const day = activeTab.textContent.toLowerCase();
+                const dayId = getDayId(day);
+                showDay(dayId);
+            } else {
+                showDay(getCurrentDay());
+            }
+        }
+
+        // Функція для показу розкладу конкретного дня
+        function showDay(day) {
+            // Знімаємо активний стан з усіх вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Активуємо поточну вкладку
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(getDayName(day).toLowerCase())) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Визначаємо тип тижня
+            const weekType = determineWeekType();
+            
+            // Отримуємо розклад для вибраного дня і типу тижня
+            const daySchedule = scheduleData[weekType][day];
+            
+            // Генеруємо HTML для розкладу
+            let scheduleHTML = `
+                <div class="day-section" id="${day}">
+                    <div class="day-header">${getDayName(day)}</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Час</th>
+                                <th>Предмет</th>
+                                <th>Викладач</th>
+                                <th>Посилання</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            // Додаємо рядки для кожної пари
+            daySchedule.forEach(lesson => {
+                if (lesson.subject) {
+                    // Генеруємо кнопки для посилань
+                    let buttonHTML = '';
+                    if (lesson.links && lesson.links.length > 0) {
+                        buttonHTML = '<div class="button-container">';
+                        lesson.links.forEach(link => {
+                            buttonHTML += `<button class="join-button" onclick="window.open('${link.url}', '_blank')">${link.label}</button>`;
+                        });
+                        buttonHTML += '</div>';
+                    }
+                    
+                    // Додаємо коментар про тиждень початку пари, якщо є
+                    let noteHTML = '';
+                    if (lesson.note) {
+                        noteHTML = `<span class="start-week-note">${lesson.note}</span>`;
+                    }
+                    
+                    scheduleHTML += `
+                        <tr>
+                            <td class="time-cell">${lesson.time}</td>
+                            <td class="subject-cell">${lesson.subject}${noteHTML}</td>
+                            <td class="teacher-cell">${lesson.teacher}</td>
+                            <td>${buttonHTML}</td>
+                        </tr>
+                    `;
+                } else {
+                    scheduleHTML += `
+                        <tr>
+                            <td class="time-cell">${lesson.time}</td>
+                            <td colspan="3" class="no-classes">Немає занять</td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            scheduleHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            // Оновлюємо контейнер розкладу
+            document.getElementById('schedule-container').innerHTML = scheduleHTML;
+        }
+
+        // Функція для отримання назви дня українською
+        function getDayName(day) {
+            const days = {
+                'monday': 'Понеділок',
+                'tuesday': 'Вівторок',
+                'wednesday': 'Середа',
+                'thursday': 'Четвер',
+                'friday': 'П\'ятниця'
+            };
+            return days[day];
+        }
+
+        // Функція для отримання ID дня за назвою
+        function getDayId(dayName) {
+            const dayNameLower = dayName.toLowerCase();
+            if (dayNameLower.includes('понеділок')) return 'monday';
+            if (dayNameLower.includes('вівторок')) return 'tuesday';
+            if (dayNameLower.includes('середа')) return 'wednesday';
+            if (dayNameLower.includes('четвер')) return 'thursday';
+            if (dayNameLower.includes('п\'ятниця') || dayNameLower.includes('пятниця')) return 'friday';
+            return 'monday'; // За замовчуванням
+        }
+
+        // Функція для отримання поточного дня тижня
+        function getCurrentDay() {
+            const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayIndex = new Date().getDay();
+            return days[dayIndex];
+        }
+
+        // Функція для оновлення індикатора тижня
+        function updateWeekIndicator() {
+            const weekType = determineWeekType();
+            const weekIndicator = document.getElementById('week-indicator');
+            const weekNumber = document.getElementById('week-number');
+            
+            if (weekType === 'even') {
+                weekIndicator.textContent = 'Парний тиждень';
+            } else {
+                weekIndicator.textContent = 'Непарний тиждень';
+            }
+            
+            // Оновлюємо номер тижня
+            const currentWeekNumber = calculateWeekNumber();
+            weekNumber.textContent = `Тиждень №${currentWeekNumber}`;
+        }
+
+        // Ініціалізація при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', function() {
+            updateWeekIndicator();
+            
+            // Визначаємо поточний день тижня
+            let currentDay = getCurrentDay();
+            
+            // Якщо вихідний, показуємо понеділок
+            if (currentDay === 'saturday' || currentDay === 'sunday') {
+                currentDay = 'monday';
+            }
+            
+            // Показуємо розклад на поточний день
+            showDay(currentDay);
+            
+            // Активуємо відповідну вкладку
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.toLowerCase().includes(getDayName(currentDay).toLowerCase())) {
+                    tab.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
